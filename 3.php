@@ -1,28 +1,35 @@
 <?php
+
 /**
- * Undocumented function
- *
- * @param string $text
- * @return string|int|null
+ * @param string $text Входной текст
+ * @return string|int|null Самое частое слово, сообщение об ошибке или null (если текст пустой)
  */
-function mostRecent(string $text) {
-    if (strlen($text) > 1000) {  
-        return "Текст превышает допустимую длину (1000 символов)";  
-    }   
-    $words = preg_split('/\s+/', strtolower(preg_replace('/[^\w\s]/u', '', $text)));  
-    $wordCount = array();  
-    foreach ($words as $word) {  
-        if (!empty($word)) {
-            if (isset($wordCount[$word])) {  
-                $wordCount[$word]++;  
-            } else {  
-                $wordCount[$word] = 1;  
-            }  
-        }  
-    }  
+function mostRecent(string $text): string|int|null
+{
+    if (strlen($text) > 1000) {
+        return "Текст превышает допустимую длину (1000 символов)";
+    }
+
+    
+    $words = preg_split('/\s+/', strtolower(preg_replace('/[^\p{L}\p{N}\s]/u', '', $text)));
+
+    $wordCount = [];
+
+    foreach ($words as $word) {
+        if ($word !== '') {
+            $wordCount[$word] = ($wordCount[$word] ?? 0) + 1;
+        }
+    }
+
+    if (empty($wordCount)) {
+        return null;
+    }
+
     arsort($wordCount);
-    reset($wordCount);
+
     return key($wordCount);
-}  
-$text = "Но ты придёшь, желанная красавица, и я на миг застыну безъязыко, когда ты так застенчиво представишься: «Победа, или можно просто Вика». Игорь Караулов.";  
+}
+
+$text = "Но ты придёшь, желанная красавица, и я на миг застыну безъязыко, когда ты так застенчиво представишься: «Победа, или можно просто Вика». Игорь Караулов.";
+
 echo mostRecent($text);
